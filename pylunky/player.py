@@ -3,7 +3,7 @@ import os
 import random
 import time
 
-class Mover():
+class Player():
 	def __init__(self, x=None, y=None, direction=None, speed=None):
 		self.x = x
 		self.y = y

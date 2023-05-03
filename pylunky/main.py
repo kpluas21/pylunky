@@ -1,15 +1,16 @@
-import pygame
+import math
 #Standard lib
 import os
+import random
 import sys
 import time
-import random
-import math
-#Own Files
-import readmap
-import mover
+
 import camera
 import display
+import pylunky.player as player
+import pygame
+#Own Files
+import readmap
 
 pygame.init()
 height = 320
@@ -23,18 +24,21 @@ clock = pygame.time.Clock()
 def main():
 	
 	global gameinfo
-	gameinfo = readmap.ReadMap('1.map')
-	newmover = mover.Mover(x=gameinfo.gamemap.start[0]*32,y=gameinfo.gamemap.start[1]*32, direction=0, speed=0)
-
-	cam = camera.cam(newmover.x, newmover.y, width, height, gameinfo.gamemap.width()*32, gameinfo.gamemap.height()*32)
+	gameinfo = readmap.ReadMap('resources/maps/1.map')
+	player = player.Player(x=gameinfo.gamemap.start[0]*32,y=gameinfo.gamemap.start[1]*32, direction=0, speed=0)
+	
+	cam = camera.cam(player.x, player.y, width, height, gameinfo.gamemap.width()*32, gameinfo.gamemap.height()*32)
 	
 	ui = display.display()
 
 	while True:
+
 		pygame.event.pump()
 
-		newmover.loop(gameinfo, screen)
+		player.loop(gameinfo, screen)
 
+		event = pygame.event.poll()
+		
 		#Gamemap display
 		for k in gameinfo.gamemap.map():
 			for i in k:						
@@ -48,13 +52,13 @@ def main():
 			ent.position()[1]+offcount[1]-cam.y))
 		
 		#Player display
-		screen.blit(newmover.image, (newmover.x-cam.x,newmover.y-cam.y))
+		screen.blit(player.image, (player.x-cam.x,player.y-cam.y))
 
 		#UI elements
-		ui.ui(screen, cam, newmover, gameinfo)
+		ui.ui(screen, cam, player, gameinfo)
 
 		#Camera update
-		cam.move(newmover.x, newmover.y)
+		cam.move(player.x, player.y)
 
 		pygame.display.flip()
 		clock.tick(90)
